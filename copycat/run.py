@@ -2,7 +2,10 @@ import argparse
 import importlib.metadata as metadata
 from argparse import Namespace
 
-__version__ = metadata.version(__package__ or __name__)
+try:
+    __version__ = metadata.version(__package__ or __name__)
+except metadata.PackageNotFoundError:
+    __version__ = "0.1.3"
 
 from copycat.models.log_level import LogLevel
 from copycat.shared.utils.logger import Logger
@@ -24,9 +27,9 @@ class Copycat:
         if self.args.gui:
             self.logger.info("Running GUI...")
             tool.show()
-        elif self.args.reply:
-            macro_name = self.args.reply
-            self.logger.info(f"Replying to macro: {macro_name}")
+        elif self.args.replay:
+            macro_name = self.args.replay
+            self.logger.info(f"Replaying macro: {macro_name}")
             tool.play_macro(macro_name)
 
         self.logger.info("Created by ZappaBoy")
@@ -49,8 +52,8 @@ class Copycat:
                             help='Set the "ttkthemes" GUI theme. (Default: equilux)')
         parser.add_argument('--speed', '-s', action='store', default=1.0, type=float,
                             help='Speed of the macro playback. (Default: 1.0)')
-        parser.add_argument('--reply', '-r', action='store', type=str,
-                            help='Define macro name to reply.')
+        parser.add_argument('--replay', '-r', action='store', type=str,
+                            help='Define macro name to replay.')
         return parser.parse_args()
 
     def check_args(self) -> None:
